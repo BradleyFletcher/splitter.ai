@@ -105,14 +105,24 @@ export function FileUpload() {
   });
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
+      <div className="text-center">
+        <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
+          Split Your Audio
+        </h2>
+        <p className="mt-3 text-lg leading-6 text-gray-500 dark:text-gray-400">
+          Upload your audio file and we'll separate it into individual stems
+          using AI.
+        </p>
+      </div>
+
       <div
         {...getRootProps()}
-        className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors
+        className={`border-2 border-dashed rounded-lg p-12 text-center cursor-pointer transition-colors
           ${
             isDragActive
-              ? "border-blue-500 bg-blue-50"
-              : "border-gray-300 hover:border-gray-400"
+              ? "border-primary-500 bg-primary-50 dark:bg-dark-800"
+              : "border-gray-300 dark:border-dark-600 hover:border-primary-400 dark:hover:border-primary-500"
           }
           ${
             (status === "uploading" || status === "processing") &&
@@ -121,20 +131,28 @@ export function FileUpload() {
       >
         <input {...getInputProps()} />
         {status === "uploading" ? (
-          <p className="text-gray-600">Uploading your file...</p>
+          <p className="text-gray-600 dark:text-gray-400">
+            Uploading your file...
+          </p>
         ) : status === "processing" ? (
           <div className="space-y-2">
-            <p className="text-gray-600">Processing your audio file...</p>
-            <p className="text-sm text-gray-500">This may take a few minutes</p>
+            <p className="text-gray-600 dark:text-gray-400">
+              Processing your audio file...
+            </p>
+            <p className="text-sm text-gray-500 dark:text-gray-500">
+              This may take a few minutes
+            </p>
           </div>
         ) : isDragActive ? (
-          <p className="text-blue-500">Drop the audio file here</p>
+          <p className="text-primary-600 dark:text-primary-400">
+            Drop the audio file here
+          </p>
         ) : (
           <div className="space-y-2">
-            <p className="text-gray-600">
+            <p className="text-gray-600 dark:text-gray-400">
               Drag and drop an audio file here, or click to select
             </p>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-500 dark:text-gray-500">
               Maximum file size: {MAX_FILE_SIZE / 1024 / 1024}MB
             </p>
           </div>
@@ -142,40 +160,42 @@ export function FileUpload() {
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <p className="text-red-600 text-sm">{error}</p>
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+          <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
         </div>
       )}
 
       {status === "complete" && processedFiles && (
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4 space-y-3">
-          <p className="text-green-600 font-medium">Processing complete!</p>
-          <div className="grid grid-cols-2 gap-3">
+        <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-6 space-y-4">
+          <p className="text-green-600 dark:text-green-400 font-medium text-center">
+            Processing complete!
+          </p>
+          <div className="grid grid-cols-2 gap-4">
             <a
               href={processedFiles.vocals}
               download
-              className="text-center bg-green-600 text-white rounded-lg px-4 py-2 hover:bg-green-700 transition-colors"
+              className="flex items-center justify-center px-4 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 dark:bg-primary-700 dark:hover:bg-primary-800"
             >
               Download Vocals
             </a>
             <a
               href={processedFiles.drums}
               download
-              className="text-center bg-green-600 text-white rounded-lg px-4 py-2 hover:bg-green-700 transition-colors"
+              className="flex items-center justify-center px-4 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 dark:bg-primary-700 dark:hover:bg-primary-800"
             >
               Download Drums
             </a>
             <a
               href={processedFiles.bass}
               download
-              className="text-center bg-green-600 text-white rounded-lg px-4 py-2 hover:bg-green-700 transition-colors"
+              className="flex items-center justify-center px-4 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 dark:bg-primary-700 dark:hover:bg-primary-800"
             >
               Download Bass
             </a>
             <a
               href={processedFiles.other}
               download
-              className="text-center bg-green-600 text-white rounded-lg px-4 py-2 hover:bg-green-700 transition-colors"
+              className="flex items-center justify-center px-4 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 dark:bg-primary-700 dark:hover:bg-primary-800"
             >
               Download Other
             </a>

@@ -1,12 +1,14 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { Layout } from "@/components/Layout";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Splitter.ai - Audio Vocal Separation",
-  description: "Separate vocals from your audio files using AI",
+  title: "Splitter.ai - AI-Powered Audio Source Separation",
+  description:
+    "Split any song into separate stems for vocals, drums, bass, and other instruments using advanced AI technology.",
 };
 
 export default function RootLayout({
@@ -17,16 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <main className="min-h-screen bg-gray-50">
-          <nav className="bg-white shadow-sm">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-              <h1 className="text-2xl font-bold text-gray-900">Splitter.ai</h1>
-            </div>
-          </nav>
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            {children}
-          </div>
-        </main>
+        <Layout>{children}</Layout>
       </body>
     </html>
   );

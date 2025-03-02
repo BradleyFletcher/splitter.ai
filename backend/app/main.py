@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 import httpx
 import os
@@ -35,6 +36,10 @@ device = torch.device("cpu")
 
 class ProcessRequest(BaseModel):
     url: str
+
+@app.get("/")
+async def root():
+    return RedirectResponse(url="/docs")
 
 @app.post("/process")
 async def process_audio(request: ProcessRequest):
