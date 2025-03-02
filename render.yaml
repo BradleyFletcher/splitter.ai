@@ -3,11 +3,7 @@ services:
     name: splitter-ai-backend
     env: python
     region: oregon # Choose the region closest to your users
-    buildCommand: |
-      # Install system dependencies
-      apt-get update && apt-get install -y ffmpeg libsndfile1
-      # Install Python dependencies
-      cd backend && pip install -r requirements.txt
+    buildCommand: pip install -r backend/requirements.txt
     startCommand: cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: PYTHON_VERSION
@@ -22,3 +18,7 @@ services:
       name: tmp
       mountPath: /tmp
       sizeGB: 1
+    # Use Render's package management
+    packages:
+      - ffmpeg
+      - libsndfile1
