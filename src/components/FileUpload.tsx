@@ -105,12 +105,12 @@ export function FileUpload() {
   });
 
   return (
-    <div className="space-y-6">
-      <div className="text-center">
-        <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
+    <div className="space-y-8">
+      <div className="text-center space-y-4">
+        <h2 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-blue-500 to-cyan-500 bg-clip-text text-transparent sm:text-5xl">
           Split Your Audio
         </h2>
-        <p className="mt-3 text-lg leading-6 text-gray-500 dark:text-gray-400">
+        <p className="text-lg leading-8 text-slate-600 dark:text-slate-400">
           Upload your audio file and we'll separate it into individual stems
           using AI.
         </p>
@@ -118,11 +118,11 @@ export function FileUpload() {
 
       <div
         {...getRootProps()}
-        className={`border-2 border-dashed rounded-lg p-12 text-center cursor-pointer transition-colors
+        className={`border-2 border-dashed rounded-xl p-12 text-center cursor-pointer transition-all duration-200
           ${
             isDragActive
-              ? "border-primary-500 bg-primary-50 dark:bg-dark-800"
-              : "border-gray-300 dark:border-dark-600 hover:border-primary-400 dark:hover:border-primary-500"
+              ? "border-blue-500 bg-blue-50/50 dark:bg-slate-800/50"
+              : "border-slate-300 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-500 hover:bg-slate-50 dark:hover:bg-slate-800/30"
           }
           ${
             (status === "uploading" || status === "processing") &&
@@ -130,72 +130,116 @@ export function FileUpload() {
           }`}
       >
         <input {...getInputProps()} />
-        {status === "uploading" ? (
-          <p className="text-gray-600 dark:text-gray-400">
-            Uploading your file...
-          </p>
-        ) : status === "processing" ? (
-          <div className="space-y-2">
-            <p className="text-gray-600 dark:text-gray-400">
-              Processing your audio file...
-            </p>
-            <p className="text-sm text-gray-500 dark:text-gray-500">
-              This may take a few minutes
-            </p>
-          </div>
-        ) : isDragActive ? (
-          <p className="text-primary-600 dark:text-primary-400">
-            Drop the audio file here
-          </p>
-        ) : (
-          <div className="space-y-2">
-            <p className="text-gray-600 dark:text-gray-400">
-              Drag and drop an audio file here, or click to select
-            </p>
-            <p className="text-sm text-gray-500 dark:text-gray-500">
-              Maximum file size: {MAX_FILE_SIZE / 1024 / 1024}MB
-            </p>
-          </div>
-        )}
+        <div className="space-y-4">
+          {status === "uploading" ? (
+            <div className="space-y-2">
+              <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500 mx-auto" />
+              <p className="text-slate-600 dark:text-slate-400">
+                Uploading your file...
+              </p>
+            </div>
+          ) : status === "processing" ? (
+            <div className="space-y-2">
+              <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500 mx-auto" />
+              <p className="text-slate-600 dark:text-slate-400">
+                Processing your audio file...
+              </p>
+              <p className="text-sm text-slate-500 dark:text-slate-500">
+                This may take a few minutes
+              </p>
+            </div>
+          ) : isDragActive ? (
+            <div className="space-y-2">
+              <div className="mx-auto w-12 h-12 text-blue-500">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                  />
+                </svg>
+              </div>
+              <p className="text-blue-500 dark:text-blue-400 text-lg font-medium">
+                Drop the audio file here
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <div className="mx-auto w-12 h-12 text-slate-400 dark:text-slate-500">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                  />
+                </svg>
+              </div>
+              <p className="text-slate-600 dark:text-slate-400 text-lg">
+                Drag and drop an audio file here, or click to select
+              </p>
+              <p className="text-sm text-slate-500 dark:text-slate-500">
+                Maximum file size: {MAX_FILE_SIZE / 1024 / 1024}MB
+              </p>
+            </div>
+          )}
+        </div>
       </div>
 
       {error && (
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+        <div className="bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800/20 rounded-lg p-4">
           <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
         </div>
       )}
 
       {status === "complete" && processedFiles && (
-        <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-6 space-y-4">
-          <p className="text-green-600 dark:text-green-400 font-medium text-center">
-            Processing complete!
-          </p>
+        <div className="bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-8 space-y-6">
+          <div className="space-y-2 text-center">
+            <div className="mx-auto w-12 h-12 text-green-500 dark:text-green-400">
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
+            <p className="text-xl font-medium text-slate-900 dark:text-white">
+              Processing complete!
+            </p>
+            <p className="text-slate-600 dark:text-slate-400">
+              Your audio has been successfully separated into stems
+            </p>
+          </div>
+
           <div className="grid grid-cols-2 gap-4">
             <a
               href={processedFiles.vocals}
               download
-              className="flex items-center justify-center px-4 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 dark:bg-primary-700 dark:hover:bg-primary-800"
+              className="flex items-center justify-center px-4 py-3 text-base font-medium rounded-lg text-white bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-slate-900 transition-all duration-200"
             >
               Download Vocals
             </a>
             <a
               href={processedFiles.drums}
               download
-              className="flex items-center justify-center px-4 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 dark:bg-primary-700 dark:hover:bg-primary-800"
+              className="flex items-center justify-center px-4 py-3 text-base font-medium rounded-lg text-white bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-slate-900 transition-all duration-200"
             >
               Download Drums
             </a>
             <a
               href={processedFiles.bass}
               download
-              className="flex items-center justify-center px-4 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 dark:bg-primary-700 dark:hover:bg-primary-800"
+              className="flex items-center justify-center px-4 py-3 text-base font-medium rounded-lg text-white bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-slate-900 transition-all duration-200"
             >
               Download Bass
             </a>
             <a
               href={processedFiles.other}
               download
-              className="flex items-center justify-center px-4 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 dark:bg-primary-700 dark:hover:bg-primary-800"
+              className="flex items-center justify-center px-4 py-3 text-base font-medium rounded-lg text-white bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-slate-900 transition-all duration-200"
             >
               Download Other
             </a>

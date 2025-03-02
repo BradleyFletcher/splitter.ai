@@ -9,9 +9,25 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   useEffect(() => {
-    // Apply dark mode class to document
-    document.documentElement.classList.toggle("dark", isDark);
-  }, [isDark]);
+    // Check local storage for theme preference
+    const savedTheme = localStorage.getItem("theme");
+    const prefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+
+    // Use saved theme or system preference, defaulting to dark
+    const shouldBeDark = savedTheme ? savedTheme === "dark" : prefersDark;
+
+    setIsDark(shouldBeDark);
+    document.documentElement.classList.toggle("dark", shouldBeDark);
+  }, []);
+
+  const toggleTheme = () => {
+    const newTheme = !isDark;
+    setIsDark(newTheme);
+    document.documentElement.classList.toggle("dark", newTheme);
+    localStorage.setItem("theme", newTheme ? "dark" : "light");
+  };
 
   const navItems = [
     { href: "/", label: "Home" },
@@ -20,9 +36,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
   ];
 
   return (
-    <div className="min-h-screen bg-white dark:bg-dark-900 transition-colors duration-200">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors duration-200">
       {/* Navigation */}
-      <nav className="bg-white dark:bg-dark-800 border-b border-gray-200 dark:border-dark-700">
+      <nav className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex">
@@ -30,7 +46,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
               <div className="flex-shrink-0 flex items-center">
                 <Link
                   href="/"
-                  className="text-2xl font-bold text-primary-600 dark:text-primary-400"
+                  className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-cyan-500 bg-clip-text text-transparent"
                 >
                   Splitter.ai
                 </Link>
@@ -42,11 +58,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`inline-flex items-center px-1 pt-1 text-sm font-medium
+                    className={`inline-flex items-center px-1 pt-1 text-sm font-medium border-b-2 transition-colors duration-200
                       ${
                         pathname === item.href
-                          ? "border-b-2 border-primary-500 text-gray-900 dark:text-white"
-                          : "border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-700 hover:text-gray-700 dark:hover:text-gray-300"
+                          ? "border-blue-500 text-slate-900 dark:text-white"
+                          : "border-transparent text-slate-500 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-700 hover:text-slate-700 dark:hover:text-slate-300"
                       }`}
                   >
                     {item.label}
@@ -59,8 +75,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
             <div className="flex items-center">
               {/* Theme Toggle */}
               <button
-                onClick={() => setIsDark(!isDark)}
-                className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+                onClick={toggleTheme}
+                className="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors duration-200"
+                aria-label="Toggle theme"
               >
                 {isDark ? (
                   <svg
