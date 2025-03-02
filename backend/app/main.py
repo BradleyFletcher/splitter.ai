@@ -5,8 +5,10 @@ import httpx
 import os
 import tempfile
 from pathlib import Path
-import subprocess
-import shutil
+import torch
+from demucs.pretrained import get_model
+from demucs.audio import AudioFile, save_audio
+import numpy as np
 from supabase import create_client, Client
 
 app = FastAPI(title="Splitter.ai API")
@@ -26,6 +28,11 @@ supabase: Client = create_client(
     os.getenv("SUPABASE_SERVICE_KEY")
 )
 
+# Initialize Demucs model (do this at startup to avoid reloading)
+model = get_model('htdemucs')
+model.cpu()  # Use CPU for inference
+device = torch.device("cpu")
+
 class ProcessRequest(BaseModel):
     url: str
 
@@ -43,48 +50,37 @@ async def process_audio(request: ProcessRequest):
                 input_path = Path(temp_dir) / "input.mp3"
                 input_path.write_bytes(response.content)
 
-            # Process with Spleeter
-            output_path = Path(temp_dir) / "output"
-            output_path.mkdir(exist_ok=True)
+            # Load and process with Demucs
+            wav = AudioFile(input_path).read(streams=0, samplerate=model.samplerate, channels=model.audio_channels)
+            ref = wav.mean(0)
+            wav = (wav - ref.mean()) / ref.std()
             
-            subprocess.run([
-                "spleeter", "separate",
-                "-p", "spleeter:2stems",
-                "-o", str(output_path),
-                str(input_path)
-            ], check=True)
+            # Apply source separation
+            sources = model.separate(wav[None])
+            sources = sources * ref.std() + ref.mean()
 
-            # Upload results to Supabase
-            vocals_path = output_path / "input/vocals.wav"
-            accompaniment_path = output_path / "input/accompaniment.wav"
+            # Get source names
+            source_names = model.sources
 
-            # Upload vocals
-            vocals_filename = f"vocals_{Path(request.url).stem}.wav"
-            with vocals_path.open('rb') as f:
-                supabase.storage.from_("processed").upload(
-                    vocals_filename,
-                    f.read()
-                )
+            # Save separated tracks
+            results = {}
+            for source, name in zip(sources[0], source_names):
+                source_path = Path(temp_dir) / f"{name}.wav"
+                save_audio(source, str(source_path), model.samplerate)
 
-            # Upload accompaniment
-            accompaniment_filename = f"accompaniment_{Path(request.url).stem}.wav"
-            with accompaniment_path.open('rb') as f:
-                supabase.storage.from_("processed").upload(
-                    accompaniment_filename,
-                    f.read()
-                )
+                # Upload to Supabase
+                filename = f"{name}_{Path(request.url).stem}.wav"
+                with source_path.open('rb') as f:
+                    supabase.storage.from_("processed").upload(
+                        filename,
+                        f.read()
+                    )
+                
+                # Get public URL
+                results[name] = supabase.storage.from_("processed").get_public_url(filename)
 
-            # Get public URLs
-            vocals_url = supabase.storage.from_("processed").get_public_url(vocals_filename)
-            accompaniment_url = supabase.storage.from_("processed").get_public_url(accompaniment_filename)
+            return results
 
-            return {
-                "vocals": vocals_url,
-                "accompaniment": accompaniment_url
-            }
-
-    except subprocess.CalledProcessError as e:
-        raise HTTPException(status_code=500, detail="Spleeter processing failed")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
