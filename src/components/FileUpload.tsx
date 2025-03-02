@@ -119,10 +119,11 @@ export function FileUpload() {
       <div
         {...getRootProps()}
         className={`border-2 border-dashed rounded-xl p-12 text-center cursor-pointer transition-all duration-200
+          bg-white dark:bg-slate-800
           ${
             isDragActive
-              ? "border-blue-500 bg-blue-50/50 dark:bg-slate-800/50"
-              : "border-slate-300 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-500 hover:bg-slate-50 dark:hover:bg-slate-800/30"
+              ? "border-blue-500 bg-blue-50/50 dark:bg-blue-500/10"
+              : "border-slate-300 dark:border-slate-600 hover:border-blue-400 dark:hover:border-blue-500 hover:bg-slate-50 dark:hover:bg-slate-700/50"
           }
           ${
             (status === "uploading" || status === "processing") &&
@@ -134,17 +135,17 @@ export function FileUpload() {
           {status === "uploading" ? (
             <div className="space-y-2">
               <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500 mx-auto" />
-              <p className="text-slate-600 dark:text-slate-400">
+              <p className="text-slate-600 dark:text-slate-300">
                 Uploading your file...
               </p>
             </div>
           ) : status === "processing" ? (
             <div className="space-y-2">
               <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500 mx-auto" />
-              <p className="text-slate-600 dark:text-slate-400">
+              <p className="text-slate-600 dark:text-slate-300">
                 Processing your audio file...
               </p>
-              <p className="text-sm text-slate-500 dark:text-slate-500">
+              <p className="text-sm text-slate-500 dark:text-slate-400">
                 This may take a few minutes
               </p>
             </div>
@@ -176,10 +177,10 @@ export function FileUpload() {
                   />
                 </svg>
               </div>
-              <p className="text-slate-600 dark:text-slate-400 text-lg">
+              <p className="text-slate-600 dark:text-slate-300 text-lg">
                 Drag and drop an audio file here, or click to select
               </p>
-              <p className="text-sm text-slate-500 dark:text-slate-500">
+              <p className="text-sm text-slate-500 dark:text-slate-400">
                 Maximum file size: {MAX_FILE_SIZE / 1024 / 1024}MB
               </p>
             </div>
@@ -188,13 +189,13 @@ export function FileUpload() {
       </div>
 
       {error && (
-        <div className="bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800/20 rounded-lg p-4">
+        <div className="bg-red-50 dark:bg-red-500/5 border border-red-200 dark:border-red-500/10 rounded-lg p-4">
           <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
         </div>
       )}
 
       {status === "complete" && processedFiles && (
-        <div className="bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-8 space-y-6">
+        <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-8 space-y-6 shadow-lg">
           <div className="space-y-2 text-center">
             <div className="mx-auto w-12 h-12 text-green-500 dark:text-green-400">
               <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -214,32 +215,32 @@ export function FileUpload() {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <a
               href={processedFiles.vocals}
               download
-              className="flex items-center justify-center px-4 py-3 text-base font-medium rounded-lg text-white bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-slate-900 transition-all duration-200"
+              className="flex items-center justify-center px-4 py-3 text-base font-medium rounded-lg text-white bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-slate-800 transition-all duration-200 shadow-sm hover:shadow-md"
             >
               Download Vocals
             </a>
             <a
               href={processedFiles.drums}
               download
-              className="flex items-center justify-center px-4 py-3 text-base font-medium rounded-lg text-white bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-slate-900 transition-all duration-200"
+              className="flex items-center justify-center px-4 py-3 text-base font-medium rounded-lg text-white bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-slate-800 transition-all duration-200 shadow-sm hover:shadow-md"
             >
               Download Drums
             </a>
             <a
               href={processedFiles.bass}
               download
-              className="flex items-center justify-center px-4 py-3 text-base font-medium rounded-lg text-white bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-slate-900 transition-all duration-200"
+              className="flex items-center justify-center px-4 py-3 text-base font-medium rounded-lg text-white bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-slate-800 transition-all duration-200 shadow-sm hover:shadow-md"
             >
               Download Bass
             </a>
             <a
               href={processedFiles.other}
               download
-              className="flex items-center justify-center px-4 py-3 text-base font-medium rounded-lg text-white bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-slate-900 transition-all duration-200"
+              className="flex items-center justify-center px-4 py-3 text-base font-medium rounded-lg text-white bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-slate-800 transition-all duration-200 shadow-sm hover:shadow-md"
             >
               Download Other
             </a>
