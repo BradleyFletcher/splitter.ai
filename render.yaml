@@ -16,11 +16,20 @@ services:
         gfortran \
         libopenblas-dev \
         liblapack-dev \
-        pkg-config
-      # Upgrade pip and install wheel
-      pip install --upgrade pip wheel setuptools
-      # Install numpy first
-      pip install numpy==1.24.3
+        pkg-config \
+        cmake \
+        gcc \
+        g++ \
+        git
+      # Set environment variables for numpy build
+      export CFLAGS="-I/usr/include/python3.11 -I/usr/local/include/python3.11"
+      export LDFLAGS="-L/usr/lib/python3.11 -L/usr/local/lib/python3.11"
+      # Upgrade pip and install build tools
+      pip install --upgrade pip setuptools wheel
+      # Install numpy with specific build options
+      pip install --no-binary :all: numpy==1.24.3 --config-settings="--build-option=-j4"
+      # Install PyTorch CPU version (smaller and faster to install)
+      pip install torch==2.1.2 torchaudio==2.1.2 --index-url https://download.pytorch.org/whl/cpu
       # Install remaining requirements
       pip install -r backend/requirements.txt
     startCommand: cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT
@@ -35,6 +44,8 @@ services:
         value: "1"
       - key: MKL_NUM_THREADS
         value: "1"
+      - key: PYTHONPATH
+        value: "/usr/local/lib/python3.11/site-packages:/usr/lib/python3.11/site-packages"
     autoDeploy: true
     healthCheckPath: /health
     disk:
