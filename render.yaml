@@ -3,7 +3,26 @@ services:
     name: splitter-ai-backend
     env: python
     region: oregon # Choose the region closest to your users
-    buildCommand: pip install -r backend/requirements.txt
+    buildCommand: |
+      # Install system dependencies
+      apt-get update && apt-get install -y \
+        ffmpeg \
+        libsndfile1 \
+        build-essential \
+        python3-dev \
+        python3-pip \
+        python3-setuptools \
+        python3-wheel \
+        gfortran \
+        libopenblas-dev \
+        liblapack-dev \
+        pkg-config
+      # Upgrade pip and install wheel
+      pip install --upgrade pip wheel setuptools
+      # Install numpy first
+      pip install numpy==1.24.3
+      # Install remaining requirements
+      pip install -r backend/requirements.txt
     startCommand: cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: PYTHON_VERSION
@@ -12,13 +31,13 @@ services:
         sync: false # You'll need to set this in Render dashboard
       - key: SUPABASE_KEY
         sync: false # You'll need to set this in Render dashboard
+      - key: OPENBLAS_NUM_THREADS
+        value: "1"
+      - key: MKL_NUM_THREADS
+        value: "1"
     autoDeploy: true
     healthCheckPath: /health
     disk:
       name: tmp
       mountPath: /tmp
       sizeGB: 1
-    # Use Render's package management
-    packages:
-      - ffmpeg
-      - libsndfile1
