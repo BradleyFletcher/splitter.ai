@@ -13,7 +13,9 @@ type ProcessingStatus =
 
 interface ProcessedFile {
   vocals: string;
-  accompaniment: string;
+  drums: string;
+  bass: string;
+  other: string;
 }
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -67,7 +69,7 @@ export function FileUpload() {
       setStatus("processing");
 
       const response = await fetch(
-        process.env.NEXT_PUBLIC_SPLEETER_API_URL + "/process",
+        process.env.NEXT_PUBLIC_BACKEND_API_URL + "/process",
         {
           method: "POST",
           headers: {
@@ -148,20 +150,34 @@ export function FileUpload() {
       {status === "complete" && processedFiles && (
         <div className="bg-green-50 border border-green-200 rounded-lg p-4 space-y-3">
           <p className="text-green-600 font-medium">Processing complete!</p>
-          <div className="space-y-2">
+          <div className="grid grid-cols-2 gap-3">
             <a
               href={processedFiles.vocals}
               download
-              className="block w-full text-center bg-green-600 text-white rounded-lg px-4 py-2 hover:bg-green-700 transition-colors"
+              className="text-center bg-green-600 text-white rounded-lg px-4 py-2 hover:bg-green-700 transition-colors"
             >
               Download Vocals
             </a>
             <a
-              href={processedFiles.accompaniment}
+              href={processedFiles.drums}
               download
-              className="block w-full text-center bg-green-600 text-white rounded-lg px-4 py-2 hover:bg-green-700 transition-colors"
+              className="text-center bg-green-600 text-white rounded-lg px-4 py-2 hover:bg-green-700 transition-colors"
             >
-              Download Accompaniment
+              Download Drums
+            </a>
+            <a
+              href={processedFiles.bass}
+              download
+              className="text-center bg-green-600 text-white rounded-lg px-4 py-2 hover:bg-green-700 transition-colors"
+            >
+              Download Bass
+            </a>
+            <a
+              href={processedFiles.other}
+              download
+              className="text-center bg-green-600 text-white rounded-lg px-4 py-2 hover:bg-green-700 transition-colors"
+            >
+              Download Other
             </a>
           </div>
         </div>
